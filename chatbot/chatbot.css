@@ -1,1 +1,267 @@
-PLACEHOLDER_CSS
+/* ============================================================
+   Signal Chat — floating chatbot for kushpandya.github.io
+   Theme-matched to the site's design tokens (dark "Signal Path")
+   ============================================================ */
+
+#sc-launcher{
+  position:fixed;
+  bottom:24px;
+  right:24px;
+  z-index:900;
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  border:1px solid var(--border, rgba(255,255,255,0.12));
+  background:var(--surface-solid, #141416);
+  color:var(--text, #EDEDEC);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  box-shadow:0 8px 32px rgba(0,0,0,0.5);
+  transition:transform .35s var(--ease-spring, cubic-bezier(0.34,1.56,0.64,1)),
+             border-color .3s ease, background .3s ease;
+}
+#sc-launcher:hover{
+  transform:translateY(-3px) scale(1.05);
+  border-color:rgba(255,255,255,0.35);
+  background:#1C1C1F;
+}
+#sc-launcher svg{width:22px;height:22px;transition:opacity .2s ease, transform .25s ease;}
+#sc-launcher .sc-icon-close{position:absolute;opacity:0;transform:rotate(-45deg) scale(0.6);}
+#sc-launcher.open .sc-icon-chat{opacity:0;transform:rotate(45deg) scale(0.6);}
+#sc-launcher.open .sc-icon-close{opacity:1;transform:rotate(0) scale(1);}
+#sc-launcher .sc-pulse{
+  position:absolute;
+  top:2px; right:2px;
+  width:11px; height:11px;
+  border-radius:50%;
+  background:var(--accent-2, #9A9AA0);
+  border:2px solid var(--void, #050506);
+  box-shadow:0 0 8px var(--accent-2, #9A9AA0);
+  animation:sc-blink 2.4s ease-in-out infinite;
+}
+@keyframes sc-blink{0%,100%{opacity:1;}50%{opacity:.25;}}
+
+#sc-panel{
+  position:fixed;
+  bottom:92px;
+  right:24px;
+  z-index:900;
+  width:384px;
+  max-width:calc(100vw - 24px);
+  height:min(600px, calc(100vh - 130px));
+  display:flex;
+  flex-direction:column;
+  background:rgba(14,14,16,0.92);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
+  border:1px solid var(--border, rgba(255,255,255,0.12));
+  border-radius:16px;
+  box-shadow:0 24px 64px rgba(0,0,0,0.6);
+  overflow:hidden;
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(16px) scale(0.97);
+  transform-origin:bottom right;
+  transition:opacity .35s var(--ease-smooth, cubic-bezier(0.16,1,0.3,1)),
+             transform .35s var(--ease-smooth, cubic-bezier(0.16,1,0.3,1)),
+             visibility .35s;
+}
+#sc-panel.open{opacity:1;visibility:visible;transform:translateY(0) scale(1);}
+
+@media (max-width:480px){
+  #sc-panel{right:12px;left:12px;bottom:90px;width:auto;height:min(560px, calc(100vh - 120px));}
+  #sc-launcher{bottom:20px;right:20px;}
+}
+
+/* ---------- header ---------- */
+#sc-panel .sc-header{
+  padding:16px 18px;
+  border-bottom:1px solid var(--border-soft, rgba(255,255,255,0.07));
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-shrink:0;
+}
+#sc-panel .sc-header .sc-avatar{
+  width:34px;height:34px;border-radius:9px;
+  background:linear-gradient(135deg, #FFFFFF, #8A8A90);
+  color:#0B0F10;
+  font-family:'IBM Plex Mono', monospace;
+  font-weight:600;font-size:12px;letter-spacing:-0.5px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+#sc-panel .sc-header .sc-title{
+  font-family:'Space Grotesk', sans-serif;
+  font-weight:600;font-size:15px;color:var(--text, #EDEDEC);
+  line-height:1.25;
+}
+#sc-panel .sc-header .sc-subtitle{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:10.5px;color:var(--muted-2, #525256);
+  letter-spacing:0.04em;
+  display:flex;align-items:center;gap:6px;
+}
+#sc-panel .sc-header .sc-subtitle::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--accent-2, #9A9AA0);
+  box-shadow:0 0 6px var(--accent-2, #9A9AA0);
+  animation:sc-blink 2.4s ease-in-out infinite;
+}
+
+/* ---------- messages ---------- */
+#sc-messages{
+  flex:1;
+  overflow-y:auto;
+  padding:18px 16px 8px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(255,255,255,0.15) transparent;
+}
+#sc-messages::-webkit-scrollbar{width:5px;}
+#sc-messages::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:3px;}
+
+.sc-msg{
+  max-width:88%;
+  padding:11px 14px;
+  border-radius:12px;
+  font-size:13.5px;
+  line-height:1.6;
+  animation:sc-msg-in .4s var(--ease-out, cubic-bezier(0.22,1,0.36,1));
+  word-wrap:break-word;
+}
+@keyframes sc-msg-in{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.sc-msg.bot{
+  align-self:flex-start;
+  background:var(--surface, rgba(255,255,255,0.04));
+  border:1px solid var(--border-soft, rgba(255,255,255,0.07));
+  color:var(--text, #EDEDEC);
+  border-bottom-left-radius:4px;
+}
+.sc-msg.user{
+  align-self:flex-end;
+  background:rgba(255,255,255,0.92);
+  color:#0B0F10;
+  font-weight:500;
+  border-bottom-right-radius:4px;
+}
+
+/* rendered markdown inside bot messages */
+.sc-msg.bot .sc-md-h{
+  display:block;
+  font-family:'Space Grotesk', sans-serif;
+  font-weight:600;
+  font-size:14px;
+  margin:2px 0 6px;
+  color:var(--text, #EDEDEC);
+}
+.sc-msg.bot p{margin:0 0 8px;}
+.sc-msg.bot p:last-child{margin-bottom:0;}
+.sc-msg.bot ul{margin:0 0 8px;padding-left:0;list-style:none;}
+.sc-msg.bot ul li{margin-bottom:5px;padding-left:14px;position:relative;}
+.sc-msg.bot ul li::before{content:'—';position:absolute;left:0;color:var(--muted-2, #525256);}
+.sc-msg.bot strong{color:#FFFFFF;font-weight:600;}
+.sc-msg.bot a{
+  color:#FFFFFF;
+  text-decoration:underline;
+  text-decoration-color:rgba(255,255,255,0.35);
+  text-underline-offset:2px;
+}
+.sc-msg.bot a:hover{text-decoration-color:#FFFFFF;}
+.sc-msg.bot .sc-src{
+  display:block;
+  margin-top:8px;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:10px;
+  letter-spacing:0.06em;
+  color:var(--muted-2, #525256);
+  text-transform:uppercase;
+}
+
+/* typing indicator */
+.sc-typing{
+  align-self:flex-start;
+  display:inline-flex;
+  gap:5px;
+  padding:13px 16px;
+  background:var(--surface, rgba(255,255,255,0.04));
+  border:1px solid var(--border-soft, rgba(255,255,255,0.07));
+  border-radius:12px;
+  border-bottom-left-radius:4px;
+}
+.sc-typing span{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--muted, #8E8E93);
+  animation:sc-typing 1.2s ease-in-out infinite;
+}
+.sc-typing span:nth-child(2){animation-delay:.15s;}
+.sc-typing span:nth-child(3){animation-delay:.3s;}
+@keyframes sc-typing{0%,60%,100%{transform:translateY(0);opacity:.4;}30%{transform:translateY(-4px);opacity:1;}}
+
+/* ---------- suggestion chips ---------- */
+#sc-chips{
+  display:flex;
+  gap:8px;
+  padding:4px 16px 10px;
+  flex-wrap:wrap;
+  flex-shrink:0;
+}
+#sc-chips button{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11px;
+  color:var(--muted, #8E8E93);
+  background:var(--surface, rgba(255,255,255,0.04));
+  border:1px solid var(--border-soft, rgba(255,255,255,0.09));
+  padding:7px 12px;
+  border-radius:999px;
+  cursor:pointer;
+  transition:all .25s ease;
+}
+#sc-chips button:hover{
+  color:var(--text, #EDEDEC);
+  border-color:rgba(255,255,255,0.3);
+  background:var(--surface-strong, rgba(255,255,255,0.075));
+  transform:translateY(-1px);
+}
+
+/* ---------- input ---------- */
+#sc-inputbar{
+  display:flex;
+  gap:8px;
+  padding:12px;
+  border-top:1px solid var(--border-soft, rgba(255,255,255,0.07));
+  flex-shrink:0;
+}
+#sc-input{
+  flex:1;
+  background:var(--surface, rgba(255,255,255,0.04));
+  border:1px solid var(--border-soft, rgba(255,255,255,0.09));
+  border-radius:10px;
+  padding:11px 14px;
+  color:var(--text, #EDEDEC);
+  font-family:'Inter', sans-serif;
+  font-size:13.5px;
+  outline:none;
+  transition:border-color .25s ease;
+}
+#sc-input::placeholder{color:var(--muted-2, #525256);}
+#sc-input:focus{border-color:rgba(255,255,255,0.3);}
+#sc-send{
+  width:42px;height:42px;
+  border-radius:10px;
+  border:none;
+  background:linear-gradient(135deg, #FFFFFF, #8A8A90);
+  color:#0B0F10;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  transition:transform .3s var(--ease-spring, cubic-bezier(0.34,1.56,0.64,1)), opacity .2s ease;
+  flex-shrink:0;
+}
+#sc-send:hover{transform:translateY(-1px) scale(1.04);}
+#sc-send:disabled{opacity:.45;cursor:default;transform:none;}
+#sc-send svg{width:16px;height:16px;}
